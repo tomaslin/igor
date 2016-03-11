@@ -13,6 +13,7 @@ You can obtain a jenkins api token by navigating to `http://your.jenkins.server/
 
 ```
 jenkins:
+  enabled: true
   masters:
     -
       address: "https://spinnaker.cloudbees.com/"
@@ -26,7 +27,7 @@ jenkins:
       username: spindoctor
 ```
 
-Currently Jenkins is used within Spinnaker to trigger builds and provide artifact information for the bake stages. 
+Currently Jenkins is used within Spinnaker to trigger builds and provide artifact information for the bake stages.
 
 ## Git Repositories
 
