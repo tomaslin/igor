@@ -91,7 +91,7 @@ class JenkinsBuildMonitor implements PollingMonitor {
         "jenkinsBuildMonitor"
     }
 
-    String lastStatus
+    InstanceInfo.InstanceStatus lastStatus
 
     @Override
     boolean isInService() {

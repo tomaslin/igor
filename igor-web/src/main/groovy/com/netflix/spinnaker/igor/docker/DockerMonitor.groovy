@@ -61,10 +61,13 @@ class DockerMonitor implements PollingMonitor {
         worker.schedulePeriodically(
                 {
                     if (isInService()) {
+
+                        log.info "- Polling cycle started -"
                         dockerRegistryAccounts.updateAccounts()
                         dockerRegistryAccounts.accounts.parallelStream().forEach({ account ->
                             changedTags(account)
                         })
+                        log.info "- Polling cycle done -"
                     } else {
                         log.info("not in service (lastPoll: ${lastPoll ?: 'n/a'})")
                         lastPoll = null
@@ -84,7 +87,6 @@ class DockerMonitor implements PollingMonitor {
 
             def startTime = System.currentTimeMillis()
             List<TaggedImage> images = dockerRegistryAccounts.service.getImagesByAccount(account)
-            log.info("Took ${System.currentTimeMillis() - startTime}ms to retrieve images (account: ${account})")
 
             Map<String, TaggedImage> imageIds = images.collectEntries {
                 [(cache.makeKey(account, it.registry, it.repository, it.tag)): it]
@@ -132,6 +134,9 @@ class DockerMonitor implements PollingMonitor {
                     cache.setLastDigest(image.account, image.registry, image.repository, image.tag, image.digest)
                 }
             })
+
+            log.info("Took ${System.currentTimeMillis() - startTime}ms to retrieve images (account: ${account})")
+
         } catch (Exception e) {
             log.error "Failed to update account $account", e
         }
@@ -145,7 +150,7 @@ class DockerMonitor implements PollingMonitor {
     @Autowired(required = false)
     Provider<DiscoveryClient> discoveryClient
 
-    String lastStatus
+    InstanceInfo.InstanceStatus lastStatus
 
     @Override
     boolean isInService() {
